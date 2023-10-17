@@ -7,6 +7,7 @@ import Card from "../components/Card";
 import CartButton from "../components/CartButton";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Menu, Divider } from "react-native-paper";
+import { StatusBar } from 'react-native';
 
 export default function BeneficiaryDetails({
   selectedBeneficiary,
@@ -22,9 +23,12 @@ export default function BeneficiaryDetails({
   const nic = selectedBeneficiary ? selectedBeneficiary.nic : 0;
   const [menuVisible, setMenuVisible] = useState(false);
 
+  StatusBar.setHidden(true);
+
   const handleCartPress = () => {
     navigation.navigate("Cart");
   };
+  
 
   // Show confirmation dialog when the user presses the back button
   useFocusEffect(

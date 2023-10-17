@@ -12,6 +12,7 @@ import CheckoutItem from "../components/CheckoutItem";
 import { useNavigation } from "@react-navigation/native";
 import { AntDesign } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { StatusBar } from 'react-native';
 
 export default function CartPage({
   selectedBeneficiary,
@@ -32,6 +33,10 @@ export default function CartPage({
   const navigation = useNavigation();
 
   const handleCheckout = async () => {
+
+    StatusBar.setHidden(true);
+
+
     setIsLoading(true);
     try {
       await api

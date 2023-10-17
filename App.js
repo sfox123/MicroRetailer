@@ -7,8 +7,10 @@ import Pin from "./screens/Pin";
 import BeneficiaryDetails from "./screens/BenDetails";
 import CartPage from "./screens/CartPage";
 import { NavigationContainer } from "@react-navigation/native";
+import { Provider as PaperProvider } from "react-native-paper";
 import Loading from "./screens/Loading";
-import LanguageSelectionScreen from "./screens/Lang"; // Import the new component
+import Retailer from "./screens/Retailer";
+import LanguageSelectionScreen from "./screens/Lang";
 
 const Stack = createStackNavigator();
 
@@ -16,7 +18,7 @@ function App() {
   const [cartItems, setCartItems] = useState([]);
   const [selectedBeneficiary, setSelectedBeneficiary] = useState(null);
   const [language, setLanguage] = useState("tam");
-  const [isOffline, setIsOffline] = useState(false);
+  const [retailer, setRetailer] = useState(null);
 
   const handleAddToCart = (name, quantity, price) => {
     const newItem = { name, quantity, price };
@@ -32,8 +34,13 @@ function App() {
     const getLanguage = async () => {
       try {
         const lang = await AsyncStorage.getItem("selectedLanguage");
+        const retailerCache = await AsyncStorage.getItem("retailer");
+        console.log(retailerCache);
         if (lang !== null) {
           setLanguage("tam");
+        }
+        if (retailer !== null) {
+          setRetailer(retailerCache);
         }
       } catch (error) {
         console.error(error);
@@ -43,79 +50,79 @@ function App() {
   }, []);
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen name="Loading" options={{ headerShown: false }}>
-          {(props) => (
-            <Loading
-              {...props}
-              setIsOffline={setIsOffline}
-              lang={language}
-              setLanguage={setLanguage}
-            />
-          )}
-        </Stack.Screen>
-        <Stack.Screen
-          name="Home"
-          component={Home}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen name="Pin">
-          {(props) => (
-            <Pin
-              {...props}
-              setIsOffline={setIsOffline}
-              setSelectedBeneficiary={setSelectedBeneficiary}
-            />
-          )}
-        </Stack.Screen>
-        <Stack.Screen name="Scanner">
-          {(props) => (
-            <Scanner
-              {...props}
-              setIsOffline={setIsOffline}
-              setSelectedBeneficiary={setSelectedBeneficiary}
-            />
-          )}
-        </Stack.Screen>
-        <Stack.Screen name="Cart">
-          {(props) => (
-            <CartPage
-              {...props}
-              cartItems={cartItems}
-              isOffline={isOffline}
-              setSelectedBeneficiary={setSelectedBeneficiary}
-              setCartItems={setCartItems}
-              selectedBeneficiary={selectedBeneficiary}
-              handleRemoveFromCart={handleRemoveFromCart}
-            />
-          )}
-        </Stack.Screen>
-        <Stack.Screen
-          name="BeneficiaryDetails"
-          options={{ title: "Beneficiary Details" }}
-        >
-          {(props) => (
-            <BeneficiaryDetails
-              {...props}
-              cartItems={cartItems}
-              selectedBeneficiary={selectedBeneficiary}
-              setSelectedBeneficiary={setSelectedBeneficiary}
-              setCartItems={setCartItems}
-              setLanguage={setLanguage}
-              handleAddToCart={handleAddToCart}
-              language={language}
-              handleRemoveFromCart={handleRemoveFromCart}
-            />
-          )}
-        </Stack.Screen>
-        <Stack.Screen
-          name="LanguageSelection"
-          component={LanguageSelectionScreen}
-          options={{ headerShown: false }}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <PaperProvider>
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen name="Loading" options={{ headerShown: false }}>
+            {(props) => (
+              <Loading
+                {...props}
+                lang={language}
+                retailer={retailer}
+                setLanguage={setLanguage}
+              />
+            )}
+          </Stack.Screen>
+          <Stack.Screen
+            name="Home"
+            component={Home}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen name="Pin">
+            {(props) => (
+              <Pin {...props} setSelectedBeneficiary={setSelectedBeneficiary} />
+            )}
+          </Stack.Screen>
+          <Stack.Screen name="Retailer" options={{headerShown: false}}>
+            {(props) => <Retailer {...props} setRetailer={setRetailer} />}
+          </Stack.Screen>
+          <Stack.Screen name="Scanner">
+            {(props) => (
+              <Scanner
+                {...props}
+                setSelectedBeneficiary={setSelectedBeneficiary}
+              />
+            )}
+          </Stack.Screen>
+          <Stack.Screen name="Cart">
+            {(props) => (
+              <CartPage
+                {...props}
+                cartItems={cartItems}
+                setSelectedBeneficiary={setSelectedBeneficiary}
+                setCartItems={setCartItems}
+                retailer={retailer}
+                selectedBeneficiary={selectedBeneficiary}
+                handleRemoveFromCart={handleRemoveFromCart}
+              />
+            )}
+          </Stack.Screen>
+          <Stack.Screen
+            name="BeneficiaryDetails"
+            options={{ title: "Beneficiary Details", headerShown: false }}
+          >
+            {(props) => (
+              <BeneficiaryDetails
+                {...props}
+                cartItems={cartItems}
+                selectedBeneficiary={selectedBeneficiary}
+                setSelectedBeneficiary={setSelectedBeneficiary}
+                setCartItems={setCartItems}
+                setLanguage={setLanguage}
+                handleAddToCart={handleAddToCart}
+                language={language}
+                handleRemoveFromCart={handleRemoveFromCart}
+              />
+            )}
+          </Stack.Screen>
+          <Stack.Screen
+            name="LanguageSelection"
+            component={LanguageSelectionScreen}
+            options={{ headerShown: false }}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </PaperProvider>
   );
 }
 

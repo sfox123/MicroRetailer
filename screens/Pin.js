@@ -11,9 +11,9 @@ import {
   Alert,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import beneficiariesData from "../api/beneficiaries.json";
+import api from "../api/api";
 
-export default function Pin({ isOffline, setSelectedBeneficiary }) {
+export default function Pin({ setSelectedBeneficiary }) {
   const navigation = useNavigation();
   const [pin, setPin] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -23,7 +23,7 @@ export default function Pin({ isOffline, setSelectedBeneficiary }) {
     setIsLoading(true);
 
     try {
-      const beneficiary = beneficiariesData.find((b) => b.id === pin);
+      const beneficiary = (await api.get(`/beneficiary/${pin}`)).data;
       if (beneficiary) {
         setSelectedBeneficiary(beneficiary);
         navigation.navigate("BeneficiaryDetails");
@@ -39,7 +39,7 @@ export default function Pin({ isOffline, setSelectedBeneficiary }) {
   };
   // This function checks whether the login button should be disabled
   const isLoginDisabled = () => {
-    return pin.length !== 8;
+    return pin.length < 6;
   };
 
   return (

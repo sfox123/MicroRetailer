@@ -11,10 +11,9 @@ import {
 } from "react-native";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import { useNavigation } from "@react-navigation/native";
-import beneficiariesData from "../api/beneficiaries.json";
 import api from "../api/api";
 
-const Scanner = React.memo(({ isOffline, setSelectedBeneficiary }) => {
+const Scanner = React.memo(({ setSelectedBeneficiary }) => {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -29,31 +28,19 @@ const Scanner = React.memo(({ isOffline, setSelectedBeneficiary }) => {
   }, []);
 
   const handleBarCodeScanned = async ({ data }) => {
-    if (isOffline) {
-      try {
-        const beneficiary = beneficiariesData.find((b) => b.id === pin);
-        if (beneficiary) {
-          setSelectedBeneficiary(beneficiary);
-          navigation.navigate("BeneficiaryDetails");
-        } else {
-          Alert.alert("Beneficiary not found");
-        }
-      } catch (error) {
-        console.error(error);
-        Alert.alert("Error finding beneficiary");
-      } finally {
-        setIsLoading(false);
-      }
-    } else {
-      try {
-        const response = await api.get(`/beneficiary/${data}`);
-        setSelectedBeneficiary(response.data);
+    try {
+      const beneficiary = (await api.get(`/beneficiary/${data}`)).data;
+      if (beneficiary) {
+        setSelectedBeneficiary(beneficiary);
         navigation.navigate("BeneficiaryDetails");
-      } catch (error) {
+      } else {
         Alert.alert("Beneficiary not found");
-      } finally {
-        setIsLoading(false);
       }
+    } catch (error) {
+      console.error(error);
+      Alert.alert("Error finding beneficiary");
+    } finally {
+      setIsLoading(false);
     }
   };
 

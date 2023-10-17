@@ -15,8 +15,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function CartPage({
   selectedBeneficiary,
+  retailer,
   cartItems,
-  isOffline,
   handleRemoveFromCart,
   setCartItems,
   setSelectedBeneficiary,
@@ -33,36 +33,9 @@ export default function CartPage({
 
   const handleCheckout = async () => {
     setIsLoading(true);
-    if (isOffline) {
-      // Save cartItems and index to cache
-      const cartData = { cartItems, index: id };
-      try {
-        const cachedCartData = await AsyncStorage.getItem("cartData");
-        if (cachedCartData != null) {
-          // If there is already cached data, parse it and add the new cartData object to the array
-          const cachedCartDataArray = JSON.parse(cachedCartData);
-          cachedCartDataArray.push(cartData);
-          await AsyncStorage.setItem(
-            "cartData",
-            JSON.stringify(cachedCartDataArray)
-          );
-        } else {
-          // If there is no cached data, create a new array with the cartData object and save it to the cache
-          const newCartDataArray = [cartData];
-          await AsyncStorage.setItem(
-            "cartData",
-            JSON.stringify(newCartDataArray)
-          );
-        }
-      } catch (error) {
-        console.error(error);
-      }
-      setIsLoading(false);
-      setIsSuccess(true);
-      handleRemoveFromCart(null);
-    } else {
-      api
-        .post("/beneficiaries/updateCart", { cartItems, id })
+    try {
+      await api
+        .post("/beneficiaries/updateCart", { cartItems, id,retailer })
         .then((response) => {
           setIsLoading(false);
           setIsSuccess(true);
@@ -72,6 +45,8 @@ export default function CartPage({
           setIsLoading(false);
           console.error(error);
         });
+    } catch (error) {
+      console.error(error);
     }
   };
   const handleCloseSuccess = () => {

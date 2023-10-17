@@ -5,6 +5,8 @@ import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import items from "../api/comodities";
 import Card from "../components/Card";
 import CartButton from "../components/CartButton";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { Menu, Divider } from "react-native-paper";
 
 export default function BeneficiaryDetails({
   selectedBeneficiary,
@@ -17,6 +19,8 @@ export default function BeneficiaryDetails({
 }) {
   const navigation = useNavigation();
   const amount = selectedBeneficiary ? selectedBeneficiary.amount : 0;
+  const nic = selectedBeneficiary ? selectedBeneficiary.nic : 0;
+  const [menuVisible, setMenuVisible] = useState(false);
 
   const handleCartPress = () => {
     navigation.navigate("Cart");
@@ -57,45 +61,53 @@ export default function BeneficiaryDetails({
 
   const handleLanguageChange = (lang) => {
     setLanguage(lang);
+    setMenuVisible(false);
   };
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.languageText}>Language:</Text>
-        <View style={styles.languageButtons}>
-          <Text
-            style={[
-              styles.languageButton,
-              language === "eng" && styles.selectedLanguageButton,
-            ]}
-            onPress={() => handleLanguageChange("eng")}
-          >
-            EN
-          </Text>
-          <Text
-            style={[
-              styles.languageButton,
-              language === "tam" && styles.selectedLanguageButton,
-            ]}
-            onPress={() => handleLanguageChange("tam")}
-          >
-            TA
-          </Text>
-          <Text
-            style={[
-              styles.languageButton,
-              language === "sin" && styles.selectedLanguageButton,
-            ]}
-            onPress={() => handleLanguageChange("sin")}
-          >
-            SI
-          </Text>
-        </View>
-      </View>
       <LinearGradient colors={["#007DBC", "#6FB9E8"]} style={styles.card}>
-        <Text style={styles.balanceText}>Balance: Rs. {amount.toFixed(2)}</Text>
+        <Text style={styles.balanceText}>Balance: Rs. {amount}</Text>
       </LinearGradient>
+      <View style={styles.header}>
+        <Text style={styles.nic}>NIC - {nic}</Text>
+        <MaterialCommunityIcons
+          name="earth"
+          size={30}
+          color="#007DBC"
+          onPress={() => setMenuVisible(true)}
+        />
+        <Menu
+          visible={menuVisible}
+          onDismiss={() => setMenuVisible(false)}
+          anchor={
+            <MaterialCommunityIcons
+              name="earth"
+              size={30}
+              color="#007DBC"
+              style={{ opacity: 0 }}
+            />
+          }
+        >
+          <Menu.Item
+            onPress={() => handleLanguageChange("eng")}
+            title="English"
+            icon={language === "eng" ? "check" : "circle-outline"}
+          />
+          <Divider />
+          <Menu.Item
+            onPress={() => handleLanguageChange("tam")}
+            title="தமிழ்"
+            icon={language === "tam" ? "check" : "circle-outline"}
+          />
+          <Divider />
+          <Menu.Item
+            onPress={() => handleLanguageChange("sin")}
+            title="සිංහල"
+            icon={language === "sin" ? "check" : "circle-outline"}
+          />
+        </Menu>
+      </View>
       <ScrollView style={styles.scrollView}>
         {items.map((item, index) => {
           if (index % 2 === 0) {
@@ -121,14 +133,10 @@ export default function BeneficiaryDetails({
         })}
       </ScrollView>
       <CartButton
-        balance={amount.toFixed(2)}
+        balance={amount}
         onPress={handleCartPress}
         cartItems={cartItems}
       />
-      {/* <Logout
-        setSelectedBeneficiary={setSelectedBeneficiary}
-        setCartItems={setCartItems}
-      /> */}
     </View>
   );
 }
@@ -139,32 +147,19 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "center",
   },
+  nic: {
+    textAlign: "left",
+    color: "#007DBC",
+    marginRight: 50,
+    fontSize: 20,
+  },
   header: {
     flexDirection: "row",
-    justifyContent: "center",
+    justifyContent: "flex-start",
     alignItems: "center",
     marginVertical: 10,
-  },
-  languageText: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginRight: 10,
-  },
-  languageButtons: {
-    flexDirection: "row",
-  },
-  languageButton: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginHorizontal: 5,
-    borderRadius: 20,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    backgroundColor: "#ccc",
-  },
-  selectedLanguageButton: {
-    backgroundColor: "#007AFF",
-    color: "white",
+    alignSelf: "flex-end",
+    textAlign: "center",
   },
   card: {
     borderRadius: 10,

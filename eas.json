@@ -3,9 +3,6 @@
     "version": ">= 5.4.0"
   },
   "build": {
-    "production": {
-      "node": "16.13.0"
-    },
     "development": {
       "developmentClient": true,
       "distribution": "internal",

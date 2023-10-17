@@ -1,10 +1,8 @@
 import React, { useEffect, useState, useRef } from "react";
 import { View, StyleSheet, Animated, Text } from "react-native";
 import { ActivityIndicator, Button } from "react-native-paper";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import api from "../api/api";
 
-export default function Loading({ navigation, setIsOffline }) {
+export default function Loading({ navigation, retailer }) {
   const logoPosition = useRef(new Animated.Value(0)).current;
   const textPosition = new Animated.Value(500);
   const innovationPosition = useRef(new Animated.Value(0)).current;
@@ -90,41 +88,27 @@ export default function Loading({ navigation, setIsOffline }) {
     }
   }, [innovationText]);
 
-  const checkInternetConnectivity = async () => {
-    try {
-      const response = await fetch("https://www.google.com");
-      const selectedLanguage = await AsyncStorage.getItem("selectedLanguage");
-      if (response.ok) {
-        const cartData = await AsyncStorage.getItem("cartData");
-        if (cartData != null) {
-          const cartDataArray = JSON.parse(cartData);
-          const payload = { cartData: cartDataArray };
-          api.post("/beneficiaries/cacheUpdate", payload).then(() => {
-            // Clear the cache after uploading data
-            AsyncStorage.removeItem("cartData").then(() => {
-              navigation.navigate("Home");
-            });
-          });
-        } else if (selectedLanguage === null) {
-          navigation.navigate("LanguageSelection");
-        } else {
-          navigation.navigate("Home");
-        }
-      } else {
-        setIsOffline(true);
-        navigation.navigate("Home");
-      }
-    } catch (error) {
-      setIsOffline(true);
-      navigation.navigate("Home");
-    }
-  };
-
   const handleRetryButtonPress = async () => {
     setShowRetryButton(false);
     setShowSpinner(true);
     setInnovationText("Resilience");
-    checkInternetConnectivity();
+  };
+
+  const checkInternetConnectivity = async () => {
+    try {
+      const response = await fetch("https://www.google.com");
+      if (response.ok) {
+        if (retailer === null) {
+          navigation.navigate("Retailer");
+        } else {
+          navigation.navigate("Home");
+        }
+      } else {
+        setShowRetryButton(true);
+      }
+    } catch (error) {
+      setShowRetryButton(true);
+    }
   };
 
   return (

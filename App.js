@@ -11,6 +11,9 @@ import { Provider as PaperProvider } from "react-native-paper";
 import Loading from "./screens/Loading";
 import Retailer from "./screens/Retailer";
 import LanguageSelectionScreen from "./screens/Lang";
+import { StatusBar } from 'react-native';
+
+
 
 const Stack = createStackNavigator();
 
@@ -19,6 +22,9 @@ function App() {
   const [selectedBeneficiary, setSelectedBeneficiary] = useState(null);
   const [language, setLanguage] = useState("tam");
   const [retailer, setRetailer] = useState(null);
+
+  StatusBar.setTranslucent(true);
+  StatusBar.setBackgroundColor('rgba(0, 0, 0, 0.2)');
 
   const handleAddToCart = (name, quantity, price) => {
     const newItem = { name, quantity, price };

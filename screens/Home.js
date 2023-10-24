@@ -91,6 +91,19 @@ export default function Home() {
               />
               <Text style={{ color: "white", fontSize: 20 }}>Enter PIN</Text>
             </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.button, { marginTop: 20 }]}
+              title="Pin"
+              onPress={() => navigation.navigate("Print")}
+            >
+              <Icon
+                style={{ marginRight: 10 }}
+                color={"white"}
+                name="lock"
+                type="font-awesome"
+              />
+              <Text style={{ color: "white", fontSize: 20 }}>Print</Text>
+            </TouchableOpacity>
           </Animated.View>
         </BlurView>
       </ImageBackground>

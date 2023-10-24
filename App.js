@@ -4,6 +4,7 @@ import Scanner from "./screens/Scanner";
 import { createStackNavigator } from "@react-navigation/stack";
 import Home from "./screens/Home";
 import Pin from "./screens/Pin";
+import Print from "./screens/Print";
 import BeneficiaryDetails from "./screens/BenDetails";
 import CartPage from "./screens/CartPage";
 import { NavigationContainer } from "@react-navigation/native";
@@ -73,7 +74,7 @@ function App() {
               <Pin {...props} setSelectedBeneficiary={setSelectedBeneficiary} />
             )}
           </Stack.Screen>
-          <Stack.Screen name="Retailer" options={{headerShown: false}}>
+          <Stack.Screen name="Retailer" options={{ headerShown: false }}>
             {(props) => <Retailer {...props} setRetailer={setRetailer} />}
           </Stack.Screen>
           <Stack.Screen name="Scanner">
@@ -118,6 +119,11 @@ function App() {
           <Stack.Screen
             name="LanguageSelection"
             component={LanguageSelectionScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Print"
+            component={Print}
             options={{ headerShown: false }}
           />
         </Stack.Navigator>
